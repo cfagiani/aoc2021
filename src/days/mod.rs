@@ -34,7 +34,7 @@ impl Day for UnknownDay {
     }
 }
 
-
+/// Runs the solution for a single day based on the value passed in.
 pub fn run_day(input_root: &str, day_num: &str, part_num: &str) {
     let day: &dyn Day = match day_num {
         "1" => &Day1 {},

@@ -8,6 +8,7 @@ minimum, you must specify which day to run. You can then optionally specify a pa
 supplied, both parts will be run.
 
 Usage:
-aoc2021 <day> [1|2]
-where day is an integer in the range (1,25)
+aoc2021 <inputRoot> <dayNum> [partNum]
+  where inputRoot is the path to the directory containing input files, dayNum is an integer in the range (1,25) and partNum is a integer in the range (1,2).
+  Input files are assuumed to be named "dayX.txt" where X is the day number.
 

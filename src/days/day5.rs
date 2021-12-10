@@ -53,15 +53,15 @@ fn compute_crossed_lines(input_root: &str, include_diagonal: bool) -> i32 {
         }
     }
 
-    print_grid(10, 10, &covered_positions);
-
     return count;
 }
 
 /// Records that a line passed through x,y by incrementing the count in the positions map.
 fn record_pos(x: i32, y: i32, positions: &mut HashMap<Point, i32>) {
     let p = Point { x, y };
-    let existing_val = positions.get(&p);
+    // use remove instead of get to avoid holding onto the borrow on the hashmap
+    // we'll put the value back below
+    let existing_val = positions.remove(&p);
     if existing_val.is_none() {
         positions.insert(p, 1);
     } else {
@@ -69,7 +69,8 @@ fn record_pos(x: i32, y: i32, positions: &mut HashMap<Point, i32>) {
     }
 }
 
-/// Prints the grid of results
+/// Prints the grid of results. Used for debugging.
+#[allow(dead_code)]
 fn print_grid(x_dim: i32, y_dim: i32, covered_positions: &HashMap<Point, i32>) {
     for i in 0..y_dim {
         for j in 0..x_dim {
@@ -84,7 +85,7 @@ fn print_grid(x_dim: i32, y_dim: i32, covered_positions: &HashMap<Point, i32>) {
     }
 }
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(PartialEq, Eq, Hash, Clone)]
 struct Point {
     x: i32,
     y: i32,

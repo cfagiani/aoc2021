@@ -1,3 +1,4 @@
+use crate::days::day10::Day10;
 use crate::days::day1::Day1;
 use crate::days::day2::Day2;
 use crate::days::day3::Day3;
@@ -17,6 +18,7 @@ mod day6;
 mod day7;
 mod day8;
 mod day9;
+mod day10;
 
 /// Trait for the solution to each Day of the Advent of Code.
 /// Each day implements two methods, part1 and part2. The methods will read input (if any) and then
@@ -51,10 +53,11 @@ pub fn run_day(input_root: &str, day_num: &str, part_num: &str) {
         "3" => &Day3 {},
         "4" => &Day4 {},
         "5" => &Day5 {},
-        "6" => &Day6{},
-        "7" => &Day7{},
-        "8" => &Day8{},
-        "9" => &Day9{},
+        "6" => &Day6 {},
+        "7" => &Day7 {},
+        "8" => &Day8 {},
+        "9" => &Day9 {},
+        "10" => &Day10 {},
         _ => &UnknownDay {}
     };
     match part_num {

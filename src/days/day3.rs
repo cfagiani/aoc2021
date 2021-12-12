@@ -17,7 +17,7 @@ impl Day for Day3 {
             match most_common {
                 '1' => epsilon.push('0'),
                 '0' => epsilon.push('1'),
-                _ => ()
+                _ => (),
             }
         }
         let gamma_int = isize::from_str_radix(gamma.as_str(), 2).unwrap();
@@ -30,11 +30,7 @@ impl Day for Day3 {
         let bit_strings = get_data_from_file(input_root, "day3.txt", |r| r);
         let oxygen_rating = find_rating(&bit_strings, |r: char| r);
         let co2_rating = find_rating(&bit_strings, |r: char| {
-            return if r == '1' {
-                '0'
-            } else {
-                '1'
-            };
+            return if r == '1' { '0' } else { '1' };
         });
         println!("Life support rating {}", oxygen_rating * co2_rating);
     }
@@ -66,11 +62,7 @@ fn get_most_common_val_at_position(candidates: &Vec<String>, pos: usize) -> char
         }
     }
 
-    return if one_count >= zero_count {
-        '1'
-    } else {
-        '0'
-    };
+    return if one_count >= zero_count { '1' } else { '0' };
 }
 
 /// Filters a list of Strings based to return a new Vector containing just those strings that have
@@ -84,6 +76,3 @@ fn filter_list(candidates: &Vec<String>, pos: usize, val: char) -> Vec<String> {
     }
     return filtered;
 }
-
-
-

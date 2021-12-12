@@ -1,13 +1,26 @@
 use crate::days::day1::Day1;
+use crate::days::day10::Day10;
+use crate::days::day11::Day11;
 use crate::days::day2::Day2;
 use crate::days::day3::Day3;
 use crate::days::day4::Day4;
+use crate::days::day5::Day5;
+use crate::days::day6::Day6;
+use crate::days::day7::Day7;
+use crate::days::day8::Day8;
+use crate::days::day9::Day9;
 
 mod day1;
+mod day10;
+mod day11;
 mod day2;
 mod day3;
 mod day4;
-
+mod day5;
+mod day6;
+mod day7;
+mod day8;
+mod day9;
 
 /// Trait for the solution to each Day of the Advent of Code.
 /// Each day implements two methods, part1 and part2. The methods will read input (if any) and then
@@ -34,14 +47,21 @@ impl Day for UnknownDay {
     }
 }
 
-
+/// Runs the solution for a single day based on the value passed in.
 pub fn run_day(input_root: &str, day_num: &str, part_num: &str) {
     let day: &dyn Day = match day_num {
         "1" => &Day1 {},
         "2" => &Day2 {},
         "3" => &Day3 {},
         "4" => &Day4 {},
-        _ => &UnknownDay {}
+        "5" => &Day5 {},
+        "6" => &Day6 {},
+        "7" => &Day7 {},
+        "8" => &Day8 {},
+        "9" => &Day9 {},
+        "10" => &Day10 {},
+        "11" => &Day11 {},
+        _ => &UnknownDay {},
     };
     match part_num {
         "" => {

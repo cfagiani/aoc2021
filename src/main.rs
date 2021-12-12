@@ -6,6 +6,8 @@ use crate::days::run_day;
 mod days;
 mod input;
 
+/// Driver program for this year's Advent of Code. It simply validates the command line arguments
+/// and then delegates to the run_day fuction in the days module.
 fn main() {
     let args: Vec<String> = env::args().collect();
     let mut part_num = "";

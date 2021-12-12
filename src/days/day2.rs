@@ -16,12 +16,11 @@ impl Day for Day2 {
                 "up" => depth -= t.1,
                 "down" => depth += t.1,
                 "forward" => x_pos += t.1,
-                _ => println!("unknown direction")
+                _ => println!("unknown direction"),
             }
         }
         println!("Product of position and depth is {}", x_pos * depth);
     }
-
 
     /// Computes product of depth and position, this time interpreting the directions to include the
     /// "aim" concept
@@ -39,7 +38,7 @@ impl Day for Day2 {
                     depth += aim * t.1;
                     x_pos += t.1;
                 }
-                _ => println!("unknown direction")
+                _ => println!("unknown direction"),
             }
         }
         println!("Product of position and depth is {}", x_pos * depth);

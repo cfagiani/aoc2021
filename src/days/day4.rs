@@ -18,16 +18,25 @@ impl Day for Day4 {
 /// value of the first is returned.
 fn play_bingo(input_root: &str, get_last: bool) -> i32 {
     let input = get_data_from_file(input_root, "day4.txt", |r| r);
-    let called_numbers: Vec<i32> = input.get(0).unwrap().split(",")
-        .map(|n| n.parse().unwrap()).collect();
+    let called_numbers: Vec<i32> = input
+        .get(0)
+        .unwrap()
+        .split(",")
+        .map(|n| n.parse().unwrap())
+        .collect();
 
     let mut boards: Vec<Board> = Vec::new();
     for start in (2..input.len()).step_by(6) {
         let mut board = new_board();
         for i in start..start + 5 {
-            let num_row: Vec<i32> = input.get(i).unwrap().split(" ")
-                .map(|n| n.trim()).filter(|n| n.len() > 0)
-                .map(|n| n.parse().unwrap()).collect();
+            let num_row: Vec<i32> = input
+                .get(i)
+                .unwrap()
+                .split(" ")
+                .map(|n| n.trim())
+                .filter(|n| n.len() > 0)
+                .map(|n| n.parse().unwrap())
+                .collect();
             for j in 0..5 {
                 board.numbers[(i - 2) % 5][j] = *num_row.get(j).unwrap();
             }

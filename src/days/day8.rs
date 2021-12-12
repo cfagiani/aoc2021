@@ -35,6 +35,7 @@ impl Day for Day8 {
 
 fn decode_output(digits: [Digit; 10], output: Vec<Digit>) -> u32 {
     let mut out_val = 0;
+
     for i in 0..4 {
         let dig_idx = digits
             .iter()
@@ -56,6 +57,7 @@ fn decode_signal(signal: Vec<Digit>) -> [Digit; 10] {
     let eight = find_and_remove(&mut digits, |d| d.segments.len() == 7);
 
     // 3 has 5 segments and MUST have all of one's segments
+
     let three = find_and_remove(&mut digits, |d| {
         d.segments.len() == 5 && d.segments.is_superset(&one.segments)
     });
@@ -70,6 +72,7 @@ fn decode_signal(signal: Vec<Digit>) -> [Digit; 10] {
 
     // 2 has 5 segments (at this point, only remaining 5 segment numbers are 2 and 3) and it's the only one
     // that has the top_right segment
+
     let two = find_and_remove(&mut digits, |d| {
         d.segments.len() == 5 && d.segments.contains(top_right)
     });

@@ -14,7 +14,10 @@ impl Day for Day11 {
         let mut flash_count = 0;
         for i in 0..10 {
             for j in 0..10 {
-                octopuses.insert(Octopus { loc: Loc { i, j }, level: initial_levels[i as usize][j as usize] });
+                octopuses.insert(Octopus {
+                    loc: Loc { i, j },
+                    level: initial_levels[i as usize][j as usize],
+                });
             }
         }
         for _ in 0..100 {
@@ -31,7 +34,10 @@ impl Day for Day11 {
         let mut flash_count = 0;
         for i in 0..10 {
             for j in 0..10 {
-                octopuses.insert(Octopus { loc: Loc { i, j }, level: initial_levels[i as usize][j as usize] });
+                octopuses.insert(Octopus {
+                    loc: Loc { i, j },
+                    level: initial_levels[i as usize][j as usize],
+                });
             }
         }
         let mut round = 0;
@@ -44,7 +50,6 @@ impl Day for Day11 {
         println!("All octopuses flash at once on round {}", round);
     }
 }
-
 
 fn run_round(octopuses: &HashSet<Octopus>) -> (HashSet<Octopus>, i32) {
     let mut to_process = VecDeque::new();
@@ -76,9 +81,15 @@ fn run_round(octopuses: &HashSet<Octopus>) -> (HashSet<Octopus>, i32) {
                     // don't update itself
                     continue;
                 }
-                let n_loc = Loc { i: octopus.loc.i + i, j: octopus.loc.j + j };
+                let n_loc = Loc {
+                    i: octopus.loc.i + i,
+                    j: octopus.loc.j + j,
+                };
 
-                let maybe_neighbor = cur_round.take(&Octopus { loc: n_loc, level: 0 });
+                let maybe_neighbor = cur_round.take(&Octopus {
+                    loc: n_loc,
+                    level: 0,
+                });
                 if maybe_neighbor.is_some() {
                     let mut neighbor = maybe_neighbor.unwrap();
                     if has_flashed.contains(&maybe_neighbor.unwrap()) {
@@ -127,4 +138,3 @@ impl Hash for Octopus {
         self.loc.hash(state);
     }
 }
-

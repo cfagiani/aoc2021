@@ -25,6 +25,7 @@ impl Day for Day6 {
 
 fn run_generations(input_root: &str, generations: i32) -> u64 {
     let fish_string = get_data_from_file(input_root, "day6.txt", |s| s);
+
     let fish_ages: Vec<u8> = fish_string
         .get(0)
         .unwrap()
@@ -52,6 +53,7 @@ fn run_generations(input_root: &str, generations: i32) -> u64 {
         }
         age_map = next_gen.clone();
     }
+
     return age_map
         .into_values()
         .collect::<Vec<u64>>()

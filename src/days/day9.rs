@@ -23,6 +23,7 @@ impl Day for Day9 {
     fn part2(&self, input_root: &str) {
         let height_map: Vec<Vec<u32>> =
             get_data_from_file(input_root, "day9.txt", &parse_as_digits);
+
         let mut low_points = find_low_points(&height_map);
         // each low point belongs to its own basin. Just need to calculate the size of the basin
         for point in low_points.iter_mut() {
@@ -63,6 +64,7 @@ fn get_basin_size(height_map: &Vec<Vec<u32>>, low_point: &LowPoint) -> usize {
         // for each position, add any adjacent locs that are not 9 to horizon
         let loc = horizon.pop_front().unwrap();
         visited.insert(loc.clone());
+
         let candidate_locs =
             get_candidates(&loc, height_map.len(), height_map.get(loc.i).unwrap().len());
         let to_add = candidate_locs.difference(&mut visited);
@@ -124,6 +126,7 @@ where
     if j > 0 && height_map.get(i).unwrap().get(j - 1).unwrap() <= val {
         return false;
     }
+
     if j < height_map.get(i).unwrap().len() - 1
         && height_map.get(i).unwrap().get(j + 1).unwrap() <= val
     {

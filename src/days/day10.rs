@@ -10,6 +10,7 @@ impl Day for Day10 {
     /// calculates syntax error score for corrupted lines
     fn part1(&self, input_root: &str) {
         let lines = get_data_from_file(input_root, "day10.txt", |s| s);
+
         let char_pairs = HashMap::<_, _>::from_iter(IntoIter::new([
             (')', '('),
             (']', '['),
@@ -22,6 +23,7 @@ impl Day for Day10 {
             .filter(|v| !v.0)
             .map(|v| v.2.unwrap())
             .collect();
+
         let mut score = 0;
         for c in corrupted_char {
             match c {
@@ -62,6 +64,7 @@ impl Day for Day10 {
             all_scores.push(score);
         }
         all_scores.sort();
+
         println!(
             "Autocomplete score is {}",
             all_scores.get(all_scores.len() / 2).unwrap()
@@ -74,6 +77,7 @@ impl Day for Day10 {
 /// long as we haven't encountered the wrong type of bracket). This method returns a tuple consisting
 /// of a bool indicating if the line is valid (true means valid), the remaining stack of unclosed
 /// brackets, and an optional character set tothe first illegal character (if any).
+
 fn validate_lines(
     line: &String,
     char_pairs: &HashMap<char, char>,

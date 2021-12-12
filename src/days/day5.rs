@@ -51,7 +51,6 @@ fn compute_crossed_lines(input_root: &str, include_diagonal: bool) -> i32 {
         if x_step != 0 && y_step != 0 && !include_diagonal {
             continue;
         }
-
         let mut x = line.0.x;
         let mut y = line.0.y;
         while x != line.1.x || y != line.1.y {
@@ -121,6 +120,7 @@ fn parse_line(line: String) -> (Point, Point) {
 /// Parses a Point from a string in the form "x,y"
 fn point_from_string(input: &str) -> Point {
     let coords: Vec<i32> = input.split(",").map(|c| c.parse().unwrap()).collect();
+
     Point {
         x: *coords.get(0).unwrap(),
         y: *coords.get(1).unwrap(),

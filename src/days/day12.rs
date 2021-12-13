@@ -14,19 +14,21 @@ impl Day for Day12 {
 
     fn part2(&self, input_root: &str) {
         let cave_map = parse_caves(input_root);
-        let lowercase_caves = cave_map.keys().cloned().filter(|s| s != "start" && s != "end" && s.chars().next().unwrap().is_lowercase());//.map(|v| Some(v));
+        let lowercase_caves = cave_map
+            .keys()
+            .filter(|&v| v != "start" && v != "end" && v.chars().next().unwrap().is_lowercase())
+            .map(|x| x.as_str()).map(Some);
         let mut paths = HashSet::new();
         let mut visited = HashSet::new();
         for cave in lowercase_caves {
-            let revist_allowed = Some(cave.clone());
-            get_paths_with_revisit(&cave_map, &mut visited, &["start"], &mut paths, revist_allowed);
+            get_paths_with_revisit(&cave_map, &mut visited, &["start"], &mut paths, cave);
         }
         let ans = paths.len();
         println!("{}", ans);
     }
 }
 
-fn get_paths_with_revisit<'a>(cave_map: &'a HashMap<String, HashSet<String>>, visited: &mut HashSet<String>, current: &[&'a str], paths: &mut HashSet<Vec<&'a str>>, mut allow_twice: Option<String>) {
+fn get_paths_with_revisit<'a>(cave_map: &'a HashMap<String, HashSet<String>>, visited: &mut HashSet<String>, current: &[&'a str], paths: &mut HashSet<Vec<&'a str>>, mut allow_twice: Option<&'a str>) {
     let origin = current[current.len() - 1];
 
     if origin == "end" {
@@ -50,8 +52,8 @@ fn get_paths_with_revisit<'a>(cave_map: &'a HashMap<String, HashSet<String>>, vi
         }
     }
 
-    if let Some(found_cave) = cave_map.get(origin) {
-        for destination in found_cave {
+    if let Some(neighbors) = cave_map.get(origin) {
+        for destination in neighbors {
             get_paths_with_revisit(cave_map, visited, &[current, &[destination]].concat(), paths, allow_twice);
         }
     }

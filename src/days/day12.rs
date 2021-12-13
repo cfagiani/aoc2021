@@ -1,6 +1,4 @@
-use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
-use std::hash::{Hash, Hasher};
 
 use crate::days::Day;
 use crate::input::get_data_from_file;
@@ -13,10 +11,56 @@ impl Day for Day12 {
         let path_count = count_all_paths(&cave_map, &mut HashSet::new(), "start");
         println!("There are {} paths", path_count);
     }
+
+    fn part2(&self, input_root: &str) {
+        let cave_map = parse_caves(input_root);
+        let lowercase_caves = cave_map.keys().cloned().filter(|s| s != "start" && s != "end" && s.chars().next().unwrap().is_lowercase());//.map(|v| Some(v));
+        let mut paths = HashSet::new();
+        let mut visited = HashSet::new();
+        for cave in lowercase_caves {
+            let revist_allowed = Some(cave.clone());
+            get_paths_with_revisit(&cave_map, &mut visited, &["start"], &mut paths, revist_allowed);
+        }
+        let ans = paths.len();
+        println!("{}", ans);
+    }
+}
+
+fn get_paths_with_revisit<'a>(cave_map: &'a HashMap<String, HashSet<String>>, visited: &mut HashSet<String>, current: &[&'a str], paths: &mut HashSet<Vec<&'a str>>, mut allow_twice: Option<String>) {
+    let origin = current[current.len() - 1];
+
+    if origin == "end" {
+        paths.insert(current.to_vec());
+        return;
+    }
+
+    if visited.contains(origin) {
+        return;
+    }
+
+    if origin.chars().next().unwrap().is_lowercase() {
+        if let Some(v) = allow_twice {
+            if v == origin {
+                allow_twice = None;
+            } else {
+                visited.insert(origin.to_string());
+            }
+        } else {
+            visited.insert(origin.to_string());
+        }
+    }
+
+    if let Some(found_cave) = cave_map.get(origin) {
+        for destination in found_cave {
+            get_paths_with_revisit(cave_map, visited, &[current, &[destination]].concat(), paths, allow_twice);
+        }
+    }
+
+    visited.remove(origin);
 }
 
 
-fn count_all_paths<'a>(cave_map: &HashMap<String, RefCell<Cave>>, visited: &mut HashSet<String>, current: &str) -> usize {
+fn count_all_paths<'a>(cave_map: &HashMap<String, HashSet<String>>, visited: &mut HashSet<String>, current: &str) -> usize {
     if visited.contains(current) {
         return 0;
     }
@@ -29,48 +73,23 @@ fn count_all_paths<'a>(cave_map: &HashMap<String, RefCell<Cave>>, visited: &mut 
     }
 
     let mut count = 0;
-    let neighbors = &cave_map.get(current).unwrap().borrow().neighbors;
+    let neighbors = cave_map.get(current).unwrap();
     for dest in neighbors {
-        count += count_all_paths(cave_map, visited, dest.as_str());
+        count += count_all_paths(cave_map, visited, dest);
     }
     visited.remove(current);
     return count;
 }
 
 
-fn parse_caves(input_root: &str) -> HashMap<String, RefCell<Cave>> {
+fn parse_caves(input_root: &str) -> HashMap<String, HashSet<String>> {
     let lines = get_data_from_file(input_root, "day12.txt", |s| s);
     let mut cave_map = HashMap::new();
     for line in lines {
-        let (cave_a, cave_b) = line.trim().split_once('-').unwrap();
-        cave_map.entry(String::from(cave_a)).or_insert_with_key(|name| RefCell::new(Cave { name: name.to_string(), neighbors: HashSet::new() }));
-        cave_map.entry(String::from(cave_b)).or_insert_with_key(|name| RefCell::new(Cave { name: name.to_string(), neighbors: HashSet::new() }));
+        let string_vec: Vec<String> = line.trim().split('-').map(String::from).collect();
 
-        let side = cave_map.get(cave_a).unwrap();
-        let side2 = cave_map.get(cave_b).unwrap();
-        side.borrow_mut().neighbors.insert(String::from(cave_b));
-        side2.borrow_mut().neighbors.insert(String::from(cave_a));
+        cave_map.entry(string_vec[0].clone()).or_insert_with(HashSet::new).insert(string_vec[1].clone());
+        cave_map.entry(string_vec[1].clone()).or_insert_with(HashSet::new).insert(string_vec[0].clone());
     }
     return cave_map;
-}
-
-
-#[derive(Clone)]
-struct Cave {
-    name: String,
-    neighbors: HashSet<String>,
-}
-
-impl PartialEq for Cave {
-    fn eq(&self, other: &Self) -> bool {
-        self.name.eq(&other.name)
-    }
-}
-
-impl Eq for Cave {}
-
-impl Hash for Cave {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.name.hash(state);
-    }
 }

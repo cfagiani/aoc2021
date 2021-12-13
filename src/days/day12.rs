@@ -17,7 +17,8 @@ impl Day for Day12 {
         let lowercase_caves = cave_map
             .keys()
             .filter(|&v| v != "start" && v != "end" && v.chars().next().unwrap().is_lowercase())
-            .map(|x| x.as_str()).map(Some);
+            .map(|x| x.as_str())
+            .map(Some);
         let mut paths = HashSet::new();
         let mut visited = HashSet::new();
         for cave in lowercase_caves {
@@ -28,7 +29,13 @@ impl Day for Day12 {
     }
 }
 
-fn get_paths_with_revisit<'a>(cave_map: &'a HashMap<String, HashSet<String>>, visited: &mut HashSet<String>, current: &[&'a str], paths: &mut HashSet<Vec<&'a str>>, mut allow_twice: Option<&'a str>) {
+fn get_paths_with_revisit<'a>(
+    cave_map: &'a HashMap<String, HashSet<String>>,
+    visited: &mut HashSet<String>,
+    current: &[&'a str],
+    paths: &mut HashSet<Vec<&'a str>>,
+    mut allow_twice: Option<&'a str>,
+) {
     let origin = current[current.len() - 1];
 
     if origin == "end" {
@@ -54,15 +61,24 @@ fn get_paths_with_revisit<'a>(cave_map: &'a HashMap<String, HashSet<String>>, vi
 
     if let Some(neighbors) = cave_map.get(origin) {
         for destination in neighbors {
-            get_paths_with_revisit(cave_map, visited, &[current, &[destination]].concat(), paths, allow_twice);
+            get_paths_with_revisit(
+                cave_map,
+                visited,
+                &[current, &[destination]].concat(),
+                paths,
+                allow_twice,
+            );
         }
     }
 
     visited.remove(origin);
 }
 
-
-fn count_all_paths<'a>(cave_map: &HashMap<String, HashSet<String>>, visited: &mut HashSet<String>, current: &str) -> usize {
+fn count_all_paths<'a>(
+    cave_map: &HashMap<String, HashSet<String>>,
+    visited: &mut HashSet<String>,
+    current: &str,
+) -> usize {
     if visited.contains(current) {
         return 0;
     }
@@ -83,15 +99,20 @@ fn count_all_paths<'a>(cave_map: &HashMap<String, HashSet<String>>, visited: &mu
     return count;
 }
 
-
 fn parse_caves(input_root: &str) -> HashMap<String, HashSet<String>> {
     let lines = get_data_from_file(input_root, "day12.txt", |s| s);
     let mut cave_map = HashMap::new();
     for line in lines {
         let string_vec: Vec<String> = line.trim().split('-').map(String::from).collect();
 
-        cave_map.entry(string_vec[0].clone()).or_insert_with(HashSet::new).insert(string_vec[1].clone());
-        cave_map.entry(string_vec[1].clone()).or_insert_with(HashSet::new).insert(string_vec[0].clone());
+        cave_map
+            .entry(string_vec[0].clone())
+            .or_insert_with(HashSet::new)
+            .insert(string_vec[1].clone());
+        cave_map
+            .entry(string_vec[1].clone())
+            .or_insert_with(HashSet::new)
+            .insert(string_vec[0].clone());
     }
     return cave_map;
 }

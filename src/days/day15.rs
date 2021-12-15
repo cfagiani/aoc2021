@@ -9,7 +9,12 @@ pub struct Day15 {}
 impl Day for Day15 {
     fn part1(&self, input_root: &str) {
         let risk_map = build_map(input_root);
-        println!("Lowest Risk Path: {}", risk_map.dijkstra().unwrap());
+        println!("Lowest Risk Path: {}", risk_map.dijkstra(1).unwrap());
+    }
+
+    fn part2(&self, input_root: &str) {
+        let risk_map = build_map(input_root);
+        println!("Lowest Risk Path: {}", risk_map.dijkstra(5).unwrap());
     }
 }
 
@@ -56,13 +61,26 @@ impl RiskMap {
         }
     }
 
-    pub fn get_neighbor_risk(&self, loc: &Vertex) -> Vec<(Vertex, u32)> {
-        [(-1, 0), (1, 0), (0, -1), (0, 1)].into_iter().map(|(x, y)| Vertex::new(loc.i + y, loc.j + x)).filter(|l| l.j >= 0 && l.i >= 0 && l.i < self.height && l.j < self.width).map(|l| {
-            (l, *(self.risk.get(&Vertex::new(l.i, l.j)).unwrap()))
-        }).collect()
+    pub fn get_neighbor_risk(&self, loc: &Vertex, size_factor: i32) -> Vec<(Vertex, u32)> {
+        [(-1, 0), (1, 0), (0, -1), (0, 1)]
+            .into_iter()
+            .map(|(x, y)| Vertex::new(loc.i + y, loc.j + x))
+            .filter(|l| l.j >= 0 && l.i >= 0
+                && l.i < (self.height * size_factor)
+                && l.j < (self.width * size_factor))
+            .map(|l| {
+                let base_cost = *(self.risk.get(&Vertex::new(l.i % self.height, l.j % self.width)).unwrap());
+                let x_tile_num = (l.j / self.width) as u32;
+                let y_tile_num = (l.i / self.height) as u32;
+                // costs wrap around to 1 not 0
+                let new_cost = (((base_cost + x_tile_num + y_tile_num) - 1) % 9) + 1;
+                (l, new_cost)
+            }
+            ).collect()
     }
 
-    pub fn dijkstra(&self) -> Option<u32> {
+
+    pub fn dijkstra(&self, size_factor: i32) -> Option<u32> {
         let source: Vertex = Vertex::new(0, 0);
         let mut dist_map: HashMap<Vertex, u32> = HashMap::new();
         dist_map.insert(source, 0);
@@ -71,19 +89,22 @@ impl RiskMap {
         heap.push(HeapNode { cost: 0, loc: source });
 
         while let Some(HeapNode { cost, loc }) = heap.pop() {
-            if loc.j == (self.width - 1) as i32
-                && loc.i == (self.height - 1) as i32
+            // stop when we get to the destination (bottom-right grid position)
+            if loc.j == (self.width * size_factor - 1) as i32
+                && loc.i == (self.height * size_factor - 1) as i32
             {
                 return Some(cost);
             }
 
             if let Some(old_cost) = dist_map.get(&loc) {
+                // if we have already seen the node and got there via a shorter path, skip
                 if cost > *old_cost {
                     continue;
                 }
             }
 
-            for (point, risk) in self.get_neighbor_risk(&loc) {
+            // get risk for each adjacent location
+            for (point, risk) in self.get_neighbor_risk(&loc, size_factor) {
                 let next = HeapNode {
                     cost: cost + risk,
                     loc: point,

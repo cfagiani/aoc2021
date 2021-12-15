@@ -3,6 +3,7 @@ use crate::days::day11::Day11;
 use crate::days::day12::Day12;
 use crate::days::day13::Day13;
 use crate::days::day14::Day14;
+use crate::days::day15::Day15;
 use crate::days::day1::Day1;
 use crate::days::day2::Day2;
 use crate::days::day3::Day3;
@@ -19,6 +20,7 @@ mod day11;
 mod day12;
 mod day13;
 mod day14;
+mod day15;
 mod day2;
 mod day3;
 mod day4;
@@ -70,6 +72,7 @@ pub fn run_day(input_root: &str, day_num: &str, part_num: &str) {
         "12" => &Day12 {},
         "13" => &Day13 {},
         "14" => &Day14 {},
+        "15" => &Day15 {},
         _ => &UnknownDay {},
     };
     match part_num {

@@ -12,10 +12,25 @@ impl Day for Day16 {
         }
         println!("Sum of all versions is {}", ver_sum);
     }
+
+    fn part2(&self, input_root: &str) {
+        let packets = parse_packets(input_root);
+        println!(
+            "Evaluation of packet expression is {}",
+            packets.get(0).unwrap().eval()
+        );
+    }
 }
 
 fn parse_packets<'a>(input_root: &str) -> Vec<Packet> {
-    let bit_vec: Vec<char> = get_data_from_file(input_root, "day16.txt", |s| s).get(0).unwrap().chars().map(to_bit_str).fold(String::new(), |a, b| a + b).chars().collect();
+    let bit_vec: Vec<char> = get_data_from_file(input_root, "day16.txt", |s| s)
+        .get(0)
+        .unwrap()
+        .chars()
+        .map(to_bit_str)
+        .fold(String::new(), |a, b| a + b)
+        .chars()
+        .collect();
     let mut packets = Vec::new();
     let mut pos = 0;
     while pos < bit_vec.len() - 7 {
@@ -31,7 +46,10 @@ fn parse_packets<'a>(input_root: &str) -> Vec<Packet> {
 
 fn parse_packet<'a>(bit_vec: &Vec<char>, start_pos: usize) -> (Packet, usize) {
     let mut pos = start_pos;
-    let mut packet = Packet::new(bit_vec[pos..pos + 3].iter().collect::<String>(), bit_vec[pos + 3..pos + 6].iter().collect::<String>());
+    let mut packet = Packet::new(
+        bit_vec[pos..pos + 3].iter().collect::<String>(),
+        bit_vec[pos + 3..pos + 6].iter().collect::<String>(),
+    );
     pos += 6;
     if packet.type_id == 4 {
         let mut literal_string = String::new();
@@ -54,7 +72,11 @@ fn parse_packet<'a>(bit_vec: &Vec<char>, start_pos: usize) -> (Packet, usize) {
         if len_bit == '1' {
             packet_count_len = 11;
         }
-        let sub_packet_size = to_int(&bit_vec[pos..pos + packet_count_len].iter().collect::<String>()) as usize;
+        let sub_packet_size = to_int(
+            &bit_vec[pos..pos + packet_count_len]
+                .iter()
+                .collect::<String>(),
+        ) as usize;
         pos += packet_count_len;
         if packet_count_len == 11 {
             // interpret sub_packet_size as number of packets
@@ -95,7 +117,7 @@ fn to_bit_str<'a>(c: char) -> &'a str {
         'D' => "1101",
         'E' => "1110",
         'F' => "1111",
-        _ => ""
+        _ => "",
     };
 }
 
@@ -125,6 +147,81 @@ impl Packet {
         let mut sum = self.version;
         for p in &self.packets {
             sum += p.get_version_sum();
+        }
+        return sum;
+    }
+
+    pub fn eval(&self) -> i64 {
+        match self.type_id {
+            0 => self.sum(),
+            1 => self.product(),
+            2 => self.min(),
+            3 => self.max(),
+            4 => self.value,
+            5 => self.gt(),
+            6 => self.lt(),
+            7 => self.equal(),
+            _ => 0,
+        }
+    }
+
+    fn equal(&self) -> i64 {
+        return if self.packets[0].eval() == self.packets[1].eval() {
+            1
+        } else {
+            0
+        };
+    }
+
+    fn gt(&self) -> i64 {
+        return if self.packets[0].eval() > self.packets[1].eval() {
+            1
+        } else {
+            0
+        };
+    }
+
+    fn lt(&self) -> i64 {
+        return if self.packets[0].eval() < self.packets[1].eval() {
+            1
+        } else {
+            0
+        };
+    }
+
+    fn max(&self) -> i64 {
+        let mut max = 0;
+        for sub_packet in &self.packets {
+            let val = sub_packet.eval();
+            if val > max {
+                max = val;
+            }
+        }
+        return max;
+    }
+
+    fn min(&self) -> i64 {
+        let mut min = i64::MAX;
+        for sub_packet in &self.packets {
+            let val = sub_packet.eval();
+            if val < min {
+                min = val;
+            }
+        }
+        return min;
+    }
+
+    fn product(&self) -> i64 {
+        let mut prod = 1;
+        for sub_packet in &self.packets {
+            prod = prod * sub_packet.eval();
+        }
+        return prod;
+    }
+    fn sum(&self) -> i64 {
+        let mut sum = 0;
+        for sub_packet in &self.packets {
+            sum += sub_packet.eval();
         }
         return sum;
     }

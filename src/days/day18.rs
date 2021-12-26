@@ -5,7 +5,7 @@ pub struct Day18 {}
 
 impl Day for Day18 {
     fn part1(&self, input_root: &str) {
-        let numbers = get_data_from_file(input_root, "test.txt", parse_snailfish_numbers);
+        let numbers = get_data_from_file(input_root, "day18.txt", parse_snailfish_numbers);
         let mut sums = add_all(&numbers);
         println!("Magnitude after sum: {}", get_magnitude(&mut sums));
     }
@@ -80,7 +80,7 @@ fn explode<'a>(nums: &'a mut Vec<SailfishNum>) -> bool {
             nums[i - 1].value += nums[i].value;
         }
         if i < nums.len() - 2 {
-            nums[i + 2].value = nums[i + 1].value;
+            nums[i + 2].value += nums[i + 1].value;
         }
         nums.remove(i + 1);
         nums.remove(i);

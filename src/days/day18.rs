@@ -9,6 +9,29 @@ impl Day for Day18 {
         let mut sums = add_all(&numbers);
         println!("Magnitude after sum: {}", get_magnitude(&mut sums));
     }
+
+    fn part2(&self, input_root: &str) {
+        let numbers = get_data_from_file(input_root, "day18.txt", parse_snailfish_numbers);
+        println!("Largest magnitude: {}", find_largest_magnitude(&numbers));
+    }
+}
+
+fn find_largest_magnitude(nums: &Vec<Vec<SailfishNum>>) -> i64 {
+    let mut largest_mag = 0;
+    for i in 0..nums.len() {
+        for j in 0..nums.len() {
+            if i == j {
+                continue;
+            }
+            let mut sum = do_sum(nums.get(i), nums.get(j));
+            reduce(&mut sum);
+            let cur_mag = get_magnitude(&mut sum);
+            if cur_mag > largest_mag {
+                largest_mag = cur_mag;
+            }
+        }
+    }
+    return largest_mag;
 }
 
 fn add_all(nums: &Vec<Vec<SailfishNum>>) -> Vec<SailfishNum> {
@@ -69,7 +92,7 @@ fn do_sum<'a>(a: Option<&'a Vec<SailfishNum>>, b: Option<&'a Vec<SailfishNum>>) 
     return result;
 }
 
-fn explode<'a>(nums: &'a mut Vec<SailfishNum>) -> bool {
+fn explode(nums: &mut Vec<SailfishNum>) -> bool {
     for i in 0..nums.len() {
         if nums[i].depth != 4 {
             continue;
@@ -91,7 +114,7 @@ fn explode<'a>(nums: &'a mut Vec<SailfishNum>) -> bool {
     return false;
 }
 
-fn split<'a>(nums: &'a mut Vec<SailfishNum>) -> bool {
+fn split(nums: &mut Vec<SailfishNum>) -> bool {
     for i in 0..nums.len() {
         if nums[i].value > 9 {
             let target = nums[i];
